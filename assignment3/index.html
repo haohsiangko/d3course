@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>作業三（柯皓翔）</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+    <h1>作業三（柯皓翔）</h1>
+    <h3>例題1</h3>
+    <svg width="900" height="300"></svg>
+    <script>
+        
+        d3.json("invoice-taipei.json", function(dataSet){
+                var svg = d3.select("body>svg");
+                
+                //長條圖格式設定
+                var barH = 20;
+                var barP = 5;
+                var barOriginX = 300;
+                var barOriginY = 10;
+                var textOriginX = barOriginX-20;
+                var textOriginY = barOriginY + barH*0.8;
+
+                //先做篩選
+                var fDataSet = dataSet.filter(function(d){
+                           return d.date === "2016/8/1" && 
+                                  d.cid === "A" &&
+                                  d.amount >1000000000;
+                    });
+            
+                //綁定然後畫圖
+                bind(fDataSet);
+                render();
+
+                //綁定函數
+                function bind(dataSet){
+                        //status1
+                        var selection = d3.select("body>svg")
+                                    .selectAll("g.bar1")
+                                    .data(dataSet);
+
+                        //status2 補上少的
+                        selection.enter().append("g").attr({class: "bar1"}); //class名稱記得加""
+
+                        //status3 刪掉多的
+                        selection.exit().remove();
+                }
+
+                //畫圖函數
+                function render(){
+                        //比例尺縮放
+                        var xScale=d3.scale.linear()
+                                     .domain([0,d3.max(fDataSet, function(d){return d.amount;})])
+                                     .range([0,300]);//最長300
+                    
+                        //長條
+                        d3.selectAll("g.bar1")//用已經生成的群組及類別
+                            .append("rect") //會去父層找綁定，生成長條
+                            .attr({
+                                x: function(d){return barOriginX;},
+                                y: function(d,i){return barOriginY + (barH+barP)*i;},
+                                width: function(d){return xScale(d.amount);},
+                                height: function(d){return barH;},
+                                fill: function(d){return "red";}
+                            }); 
+                    
+                        //文字：產業別
+                        d3.selectAll("g.bar1")
+                            .append("text") //會去父層找綁定
+                            .attr({
+                                x: function(d){return textOriginX;},
+                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+                                "text-anchor": "end"
+                            }).text(function(d){return d.industry;});
+                    
+                        //文字：發票數量
+                        d3.selectAll("g.bar1")
+                            .append("text") //會去父層找綁定
+                            .attr({
+                                x: function(d){return barOriginX + xScale(d.amount)+20;},
+                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+                            }).text(function(d){return d.amount;}); 
+                }
+                    
+           });
+    </script>
+    <hr>
+    <h3>例題2</h3>
+    <div></div>
+    <script>
+
+                var arr = [85, 60, 99, 49, 77, 82]; 
+
+                bind2(arr);
+                render2();
+
+                function bind2(dataSet){
+
+                    //status1
+                    var selection = d3.select("body")
+                                .selectAll("div")
+                                .data(dataSet);
+
+                    //status2 補上少的
+                    selection.enter().append("div"); 
+
+
+                    //status3 刪掉多的
+                    selection.exit().remove();
+
+                }  
+
+
+                function render2(){
+                    d3.selectAll("div")
+                        .text(
+                            //d是綁定的資料，i是順序
+                            function(d,i){
+                                return (i+1)+":"+d;
+                            })
+                        .style({
+                            color: function(d){
+                                        if(d<70){
+                                             return "red";
+                                        }else{
+                                            return "black";
+                                        } 
+                                    }
+                        }); 
+                }
+
+    </script>
+    <hr>
+    <h3>例題3</h3>
+
+    <input type="button" value="新增" onclick="update()"> 
+    <input type="button" value="移除" onclick="toDelete()">    
+
+    <script>
+
+                var arr2 = [85, 60, 99, 49, 77, 82, 33]; 
+                var w = 900, h=300, p=100;
+
+                makeSvg();
+                bind3(arr2);
+                render3();
+
+                function makeSvg(){
+                    d3.select("body")
+                        .append("svg")
+                        .attr({
+                            width: w,
+                            height: h,
+                            class: "ex3"
+                        })
+                }
+
+
+                function bind3(dataSet){
+
+                    //status1
+                    var selection = d3.select("body>svg.ex3")
+                                .selectAll("g.bar2")
+                                .data(dataSet);
+
+                    //status2 補上少的
+                    selection.enter().append("g").attr({class: "bar2"}); 
+
+
+                    //status3 刪掉多的
+                    selection.exit().remove();
+
+                }  
+
+
+                function render3(){
+                    //每次畫畫前都先清乾淨
+                    d3.selectAll("g.bar2").selectAll("rect").remove();
+                    d3.selectAll("g.bar2").selectAll("text").remove();
+                    
+                    d3.selectAll("g.bar2")
+                        .append("rect") //會去父層找綁定
+                        .attr({
+                            x: function(d,i){
+                                     return p+42*i;
+                                },
+                            y: function(d,i){
+                                     return h-p-d;
+                                },
+                            width: 40,
+                            height: function(d,i){
+                                     return d;
+                                },
+                            fill: function(d){
+                                        if(d<70){
+                                             return "red";
+                                        }else{
+                                            return "lightgreen";
+                                        } 
+                                    }
+                        }); 
+
+
+                    d3.selectAll("g.bar2")
+                        .append("text") //會去父層找綁定
+                        .attr({
+                            x: function(d,i){
+                                     return p+42*i+20;
+                                },
+                            y:  h-p+16,
+                            "text-anchor": "middle"
+                        }).text(function(d){return d;}); 
+
+                }
+
+                function random(n,m){
+                    return Math.floor(Math.random()*(m-n+1)+n);
+                }
+
+                function update(){
+                    var num = random(10,100);
+                    console.log(num);
+                    arr2.push(num);
+                    bind3(arr2);
+                    render3();
+                }
+
+                function toDelete(){
+                    arr2.pop();
+                    bind3(arr2);
+                    render3();
+                }
+      </script>
+<hr>
+<h3>例題4</h3>
+    <p>可見console，輸入xScale2("政黨名稱")測試</p>
+    
+    <script>
+                var index= ["中國國民黨", "民主進步黨", "時代力量", "無黨團結聯盟", "親民黨"];
+                var color=["blue", "green", "yellow", "gray", "orange"];
+
+                var xScale2 = d3.scale.ordinal()
+                                     .domain(index)
+                                     .range(color);
+
+                console.log(xScale2("無黨團結聯盟"));
+
+    </script>
+
+</body>
+</html>
