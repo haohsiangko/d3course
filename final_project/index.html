@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+   
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>圖解台灣禽流感疫情</title>
+    
+<!--匯入bootstrap-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/customize.css">
+    
+<!--匯入jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+<!--匯入bootstrap javascript-->  
+    <script src="js/bootstrap.min.js"></script>
+    
+</head>
+<body>
+<div class="container">
+  
+  <nav class="nav navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> 
+                </button>
+                <a class="navbar-brand" href="">圖解近年台灣禽流感疫情</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li><a data-toggle="tab" href="#home">前言</a></li>
+                    <li><a data-toggle="tab" href="#menu1">疫情地圖</a></li>
+                    <li><a data-toggle="tab" href="#menu2">分頁</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav> 
+  
+  <div class="row">
+      <div class="col-md-8">
+                <div class="tab-content preface">
+                    <div id="home" class="tab-pane fade in active ">
+                        <h3>禽流感小百科</h3>
+                        <p>禽流感是發生在雞、鴨、鵝等禽類身上的流行性感冒，冬季為好發季節，一旦爆發總會造成業者的重大損失。</p>
+                        <p>根據世界動物衛生組織（OIE）的介紹，如果按照致病性來區分，禽流感病毒可以分為高病原性（HPAI）及低病原性（LPAI）。如果感染前者，禽隻可能會出現呼吸系統及全身敗血症等嚴重症狀、致死率高；後者通常只在禽類身上引起較輕微症狀，或甚至沒有症狀表現。</p>
+                        <p>不同禽種對於病毒的抵抗能力也不同，例如鴨、鵝等水禽就被視為「保毒動物」，即使感染到了病毒也可能發病不明顯，但其體內會繼續複製病毒，有傳染其他動物的風險。因此，現在政府已禁止水、陸禽混養，而且禽場建議要設計成「非開放式」或「密閉式」，避免攜帶病原的野鳥為了吃飼料而入侵，把病毒也帶入。 </p>
+                        <p>禽場如果發現有禽隻異常，可能有禽流感之虞時，禽場主人就要儘速通報相關單位，接著採樣、送驗。如果確診，禽隻可能就要面臨預防性的撲殺；在此同時，政府也會以案例場為中心，調查周圍其他禽場狀況。</p>
+                        <p>禽流感不只可能在禽場被發現，還可能在屠宰場。根據現行的機制，禽隻在屠宰前後會經過「屠檢獸醫師」的把關攔截，如果發現疑似病例，就會啟動移動管制、凍存，確診即加以銷毀。</p>
+                        <p>禽流感的案例位置有一定的意義，從宏觀角度來看，南來北往的候鳥被認為是傳播禽流感病毒的重要途徑之一，病毒株在做了基因序列分析後，都發現與國外早先發現的病毒有極高相似度。</p>
+                        <p>鏡頭如果再拉近一點，新型態的病毒進入本土後，容易有地區性爆發，因為在禽隻、蛋品產銷的過程中，人員和車輛穿梭在不同禽場，如果沒有確實做好消毒工作，也就讓病毒交互傳播。</p>
+                        <p>我國還沒通報結束的禽流感包括H5N8亞型、H5N2亞型。這兩者與H5N3亞型（該型疫情已結束）在2015年造成台灣養禽業史上最慘重的損失。</p>
+                        <p>去年入冬以來，H5N6亞型病毒肆虐日、韓，更釀成韓國史上最嚴重的禽流感災情，撲殺了近四千萬隻家禽，甚至需從美國進口雞蛋。今年2月初台灣出現第一起H5N6案例後，政府首度祭出七天移動管制的嚴格措施，最後讓疫情控制在12案例場，撲殺4萬2千隻家禽，已經在7月25日宣布疫情結束。</p>
+                        <p>一旦高病原性禽流感發生，各國政府就會趕快通報OIE，讓周邊國家提高警覺，利於監測及控制疫情，甚至也影響進出口貿易。而在各國的通報單上，都有詳列每一個案例的地理位置、病例數、撲殺數、病毒種類等資料。</p>
+
+                    </div>
+                    <div id="menu1" class="tab-pane fade">
+                        <h3>從地圖看禽流感</h3>
+                        <p>這次的專題我們以政府各次通報OIE的文件為基準，加以爬梳整理及視覺化，帶大家看看近五年（2012年至今）國內禽流感疫情有多嚴重？如何隨時間變化？在分佈上又有什麼樣的特性？</p>
+                    </div>
+                    <div id="menu2" class="tab-pane fade">
+                        <h3>Menu 2</h3>
+                        <p>Some content in menu 2.</p>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <div class="col-md-4">
+          
+      </div>
+  </div>
+  
+ 
+
+
+
+
+</body>
+</html>
