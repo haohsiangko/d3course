@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>作業四（柯皓翔）</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <style>
+        body{
+            background: #eee;
+        }
+        .axis path, .axis line{
+          fill: none;
+          stroke: black;
+        }
+        .axis text{
+          font-size: 12px;
+          fill: black;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>作業四（柯皓翔）</h1>
+    <h3>例題1</h3>
+<!--    <svg width="900" height="400"></svg>-->
+    <script>
+        
+//        d3.json("invoice-taipei.json", function(dataSet){
+//
+//            
+//                var svg = d3.select("body>svg");
+//            
+//
+//               
+//                //長條圖格式設定
+//                var barH = 20;
+//                var barP = 5;
+//                var barOriginX = 300;
+//                var barOriginY = 10;
+//                var textOriginX = barOriginX-20;
+//                var textOriginY = barOriginY + barH*0.8;
+//            
+//            
+//                //建立X軸群組
+//                d3.select("svg")
+//                  .append("g")
+//                  .attr({
+//                     id: "axisX" 
+//                });
+//                var x = barOriginX;  //x軸平移
+//                var y = barOriginY + (barH+barP)*11 //x軸平移
+//
+//
+//                //先做篩選
+//                var fDataSet = dataSet.filter(function(d){
+//                           return d.date === "2016/8/1" && 
+//                                  d.cid === "A" &&
+//                                  d.amount >1000000000;
+//                    });
+//            
+//                //綁定然後畫圖
+//                bind(fDataSet);
+//                render();
+//            
+//
+//                //綁定函數
+//                function bind(dataSet){
+//                        //status1
+//                        var selection = d3.select("body>svg")
+//                                    .selectAll("g.bar1")
+//                                    .data(dataSet);
+//
+//                        //status2 補上少的
+//                        selection.enter().append("g").attr({class: "bar1"}); //class名稱記得加""
+//
+//                        //status3 刪掉多的
+//                        selection.exit().remove();
+//                }
+//
+//                //畫圖函數
+//                function render(){
+//                        //比例尺縮放
+//                        var xScale=d3.scale.linear()
+//                                     .domain([0,d3.max(fDataSet, function(d){return d.amount;})])
+//                                     .range([0,300]);//最長300
+//                    
+//                        //長條
+//                        d3.selectAll("g.bar1")//用已經生成的群組及類別
+//                            .append("rect") //會去父層找綁定，生成長條
+//                            .attr({
+//                                x: function(d){return barOriginX;},
+//                                y: function(d,i){return barOriginY + (barH+barP)*i;},
+//                                width: function(d){return xScale(d.amount);},
+//                                height: function(d){return barH;},
+//                                fill: function(d){return "red";}
+//                            }); 
+//                    
+//                        //文字：產業別
+//                        d3.selectAll("g.bar1")
+//                            .append("text") //會去父層找綁定
+//                            .attr({
+//                                x: function(d){return textOriginX;},
+//                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+//                                "text-anchor": "end"
+//                            }).text(function(d){return d.industry;});
+//                    
+//                        //文字：發票數量
+//                        d3.selectAll("g.bar1")
+//                            .append("text") //會去父層找綁定
+//                            .attr({
+//                                x: function(d){return barOriginX + xScale(d.amount)+20;},
+//                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+//                            }).text(function(d){return d.amount;}); 
+//                    
+//                        //建立X軸基本設定
+//                        var axisX = d3.svg
+//                                      .axis()
+//                                      .scale(xScale)
+//                                      .orient("bottom")
+//                                      .ticks(5)
+//                                      .tickFormat(function(d){return d/1000000000+"G";});
+//                     
+//                        //畫出X軸
+//
+//                        d3.select("#axisX")
+//                          .attr("class", "axis")
+//                          .attr("transform", "translate("+x+","+y+")")
+//                          .call(axisX);
+//                       
+//
+//                        
+//                        
+//                }
+//                    
+//           });
+    </script>
+    <hr>
+    <h3>例題2</h3>
+    <script>
+         
+        // 1. 定義width, height, padding, letterList變數
+        var w = 900;
+        var h = 600;
+        var padding = 60;
+        var letterList = ["A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","Q","T","U","V","W","X","Z"];
+        
+        //2. 建立svg()畫布環境
+        
+        svg();       
+        
+        //3. 用d3讀取csv
+        d3.csv("invoice.csv",mid, function(dataSet){
+           
+           bind(dataSet);
+           render(dataSet);
+            
+        });
+        
+        function mid(d){
+            d.number = +d.number;
+            d.amount = +d.amount;
+            return d;
+        }
+        
+        function svg(){
+           d3.select("body").append("svg").attr({width: w, height: h});
+            d3.select("svg").append("g").append("rect").attr({
+                width: "100%",
+                height: "100%",
+                fill: "white"
+            });
+            d3.select("svg").append("g").attr({id: "axisX_2"});
+            d3.select("svg").append("g").attr({id: "axisY_2"});
+        }
+        
+        //4. 建立bind()
+
+        function bind(dataSet){
+            var selection = d3.select("svg")
+                                .selectAll("circle")
+                                .data(dataSet);
+            
+            selection.enter().append("circle");
+            selection.exit().remove();
+        }
+        
+        function render(dataSet){
+            //5. 定義xScale,yScale,rScale, fScale比例尺(range目的在決定在svg上位置)
+
+           var xScale_2 = d3.time.scale()
+                    .domain([new Date(d3.min(dataSet, function(d){return d.date;})),new Date(d3.max(dataSet, function(d){return d.date;}))])
+                    .range([padding, w-padding]);
+            
+           var yScale_2 = d3.scale.linear()
+                    .domain([d3.min(dataSet, function(d){return d.number;}),d3.max(dataSet, function(d){return d.number;})])
+                    .range([h-padding,padding]);
+           
+            var rScale = d3.scale.linear()
+                    .domain([d3.min(dataSet, function(d){return d.amount;}),d3.max(dataSet, function(d){return d.amount;})])
+                    .range([5,30]);
+         
+            var fScale = d3.scale.category20();
+            
+            //6. 建立render()繪圖
+            d3.selectAll("circle")
+              .attr({
+                cx: function(d){return xScale_2(new Date(d.date));},
+                cy: function(d){return yScale_2(d.number);},
+               r: function(d){ return rScale(+(d.amount));},
+                fill: function(d){return fScale(d.cid);}
+              })
+            
+            //座標軸
+            var axisX_2 = d3.svg.axis().scale(xScale_2).orient("bottom").ticks(10);
+            
+            var axisY_2 = d3.svg.axis().scale(yScale_2).orient("left").tickFormat(function(d){
+                return d/1000000+"M";
+            });
+            
+            
+            d3.select("#axisX_2").attr({
+                class: "axis",
+                transform: "translate(0,"+(h-padding+10)+")"
+            }).call(axisX_2);
+            
+            d3.select("#axisY_2").attr({
+                "class": "axis",
+                "transform": "translate("+(padding-10)+",0)"
+            }).call(axisY_2);
+            
+            
+
+        }
+    
+    
+    
+    </script>
+    
+    
+
+</body>
+</html>

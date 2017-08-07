@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>d3.js with leaflet.js</title>
+
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+    
+</head>
+<body>
+
+	<div id="map" style="width: 900px; height: 600px"></div>
+	<p>勾選病毒種類做篩選</p>
+	<input type="checkbox" id="checkboxH5N1" class="options" value="H5N1">H5N1(黑)
+	 <input type="checkbox" id="checkboxH5N2" class="options" value="H5N2">H5N2(黃)
+	 <input type="checkbox" id="checkboxH5N3" class="options" value="H5N3">H5N3(綠)
+	 <input type="checkbox" id="checkboxH5N6" class="options" value="H5N6">H5N6(藍)
+	 <input type="checkbox" id="checkboxH5N8" class="options" value="H5N8">H5N8(紅)
+
+
+	<script type="text/javascript">
+
+        var map = L.map('map').setView([23.583234, 120.5825975], 7);
+        mapLink = 
+            '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+        L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; ' + mapLink + ' Contributors',
+            maxZoom: 18,
+            }).addTo(map);
+				
+	/* Initialize the SVG layer */
+	map._initPathRoot()    
+
+	/* We simply pick up the SVG from the map object */
+	var svg = d3.select("#map").select("svg"),
+	g = svg.append("g");
+	
+	d3.json("avianFlu.json", function(dataSet) {
+		/* Add a LatLng object to each item in the dataset */
+		dataSet.forEach(function(d) {
+//            console.log(d.緯度+","+d.經度);
+			d.LatLng = new L.LatLng(+d.緯度,+d.經度); //資料好像不乾淨？要加個+才能運作
+//            console.log(d.LatLng);
+		})
+		
+        
+        bind(dataSet);
+        render(dataSet)
+        
+        
+        //bind，圓的顯現與否在這裡就決定了
+        function bind(dataSet){
+            		var feature = g.selectAll("circle")
+			                       .data(dataSet);
+        
+                        feature.enter().append("circle");
+                        feature.exit().remove();
+
+        }
+
+        
+        //render，只管理形式
+        function render(dataSet){
+            
+                    //圓球大小的比例尺
+                    var rScale = d3.scale.linear()
+                    .domain([d3.min(dataSet,function(d){
+                        return d.死亡及撲殺數;
+                    }),d3.max(dataSet,function(d){
+                        return d.死亡及撲殺數;
+                    })])
+                    .range([5,30]);
+            
+            
+            
+            		g.selectAll("circle").attr({
+                                    stroke: "black",
+                                    opacity: .6,
+                                    fill: function(d){
+                                                if(d.病毒種類==="H5N1"){
+                                                    return "black";
+                                                }else if(d.病毒種類==="H5N8"){
+                                                      return "red";
+                                                }else if(d.病毒種類==="H5N2"){
+                                                      return "yellow";
+                                                }else if(d.病毒種類==="H5N6"){
+                                                      return "blue";
+                                                }else if(d.病毒種類==="H5N3"){
+                                                      return "green";
+                                                }else{
+                                                    console.log("有沒分類到的資料");
+                                                }
+                                              },
+                                    r: function(d){
+                                        return rScale(d.死亡及撲殺數);
+                                    }
+                                });
+
+        }
+
+   
+		
+		map.on("viewreset", update);
+		update();
+
+		function update() {
+            
+			g.selectAll("circle").attr("transform", 
+			function(d) { 
+				return "translate("+ 
+					map.latLngToLayerPoint(d.LatLng).x +","+ 
+					map.latLngToLayerPoint(d.LatLng).y +")";
+				}
+			)
+		}
+        
+              
+        //判斷checkbox狀態，篩選
+        var H5N1dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N1";
+        });
+        var H5N2dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N2";
+        });
+        var H5N3dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N3";
+        });
+         var H5N6dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N6";
+        });
+         var H5N8dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N8";
+        });
+        
+  
+
+        d3.select("#checkboxH5N1").on("change",updateDataSet);
+        d3.select("#checkboxH5N2").on("change",updateDataSet);
+        d3.select("#checkboxH5N3").on("change",updateDataSet);
+        d3.select("#checkboxH5N6").on("change",updateDataSet);
+        d3.select("#checkboxH5N8").on("change",updateDataSet);
+ 
+        var newDataSet = []; //永遠拿來存最新的資料
+
+        function updateDataSet(){
+            newDataSet.length = 0; //每次都要重新讀，先清乾淨
+
+            if(d3.select("#checkboxH5N1").property("checked")){
+                    newDataSet = newDataSet.concat(H5N1dataSet);    //用cancat，可以把內容一直接到array裡
+                }
+            if(d3.select("#checkboxH5N2").property("checked")){
+                    newDataSet = newDataSet.concat(H5N2dataSet);
+                }
+            if(d3.select("#checkboxH5N3").property("checked")){
+                    newDataSet = newDataSet.concat(H5N3dataSet);
+                }
+            if(d3.select("#checkboxH5N6").property("checked")){
+                    newDataSet = newDataSet.concat(H5N6dataSet);
+                }
+            if(d3.select("#checkboxH5N8").property("checked")){
+                    newDataSet = newDataSet.concat(H5N8dataSet);
+                }
+            console.log("現在篩選的資料有："+newDataSet.length+"筆");
+            bind(newDataSet); //經過條件篩過的資料去做綁定
+            render(newDataSet);  //還是要畫，去設定屬性，不然只有空的circle
+            update();  //讓circle到該去的位置上
+
+        }
+      
+        //確認資料用
+        var checkVirus=dataSet.map(function(d){
+          return d.病毒種類;
+        });
+
+        
+        //確認病毒總共有幾種
+        var uniqueVirus = unique(checkVirus);
+//        console.log(uniqueVirus);//["H5N1", "H5N2", "H5N3", "H5N6", "H5N8"]
+
+            function unique(array){
+              var n = []; 
+              for(var i = 0; i < array.length; i++){
+                if (n.indexOf(array[i]) == -1){
+                  n.push(array[i]);
+                }
+              }
+              return n;
+            }
+        
+        
+        
+        
+        
+        
+	})//讀入dataSet	
+        
+        
+        
+        
+        
+        
+</script>
+</body>
+</html>
