@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>d3.js with leaflet.js</title>
+    <meta charset="utf-8">
+
+   
+<!--   leaflet版本用0.7.7版才OK-->
+    <link 
+        rel="stylesheet" 
+        href="leaflet/leaflet.css"
+    />
+    <script
+        src="leaflet/leaflet.js">
+    </script>
+    
+<!--    http要加s-->
+    <script src="https://d3js.org/d3.v3.min.js"></script> 
+
+    
+    
+</head>
+<body>
+
+	<div id="map" style="width: 900px; height: 600px"></div>
+	<h3>勾選病毒種類做篩選</h3>
+	<input type="checkbox" id="checkboxH5N1" class="options" value="H5N1">H5N1(黑)
+	 <input type="checkbox" id="checkboxH5N2" class="options" value="H5N2">H5N2(黃)
+	 <input type="checkbox" id="checkboxH5N3" class="options" value="H5N3">H5N3(綠)
+	 <input type="checkbox" id="checkboxH5N6" class="options" value="H5N6">H5N6(藍)
+	 <input type="checkbox" id="checkboxH5N8" class="options" value="H5N8">H5N8(紅)
+    
+    <br>
+    
+    <h3>設定想觀察的時間區間</h3>
+<!--    日期篩選-->
+<!--   開始時間預設為2012/1/1-->
+    <label for="startDate">開始日期：</label>   
+    <input type="date" id="startDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2012-01-01">
+<!--    結束時間預設為2017/7/31-->
+    <label for="endDate">結束日期：</label>   
+    <input type="date" id="endDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2017-07-31">
+<!--  <button type="button" id="dateButton">啟動篩選器</button>-->
+        
+            
+                    
+	<script type="text/javascript">
+        
+//        //時間篩選
+//        var startDate = document.getElementById("startDate").value;
+//        var endDate = document.getElementById("endDate").value;
+//        console.log("初始設定時間是："+startDate+","+endDate);
+//        
+//        //按下按鈕啟動篩選器
+//        function outputDate(){
+//            startDate = document.getElementById("startDate").value;
+//            endDate = document.getElementById("endDate").value;
+//            console.log("現在設定的起訖時間是："+startDate+","+endDate);
+//        }
+//        
+//        //點選時間篩選器之後，更新最新的時間狀態
+//        d3.select("#startDate").on("change",outputDate);
+//        d3.select("#endDate").on("change",outputDate);
+        
+        
+
+        
+
+        var map = L.map('map').setView([23.583234, 120.5825975], 7);
+        
+//        http要加s
+        mapLink = 
+            '<a href="https://openstreetmap.org">OpenStreetMap</a>';
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; ' + mapLink + ' Contributors',
+            maxZoom: 18,
+            }).addTo(map);
+				
+	/* Initialize the SVG layer */
+	map._initPathRoot();   // 這行在新的leaflet版本會不能跑
+
+	/* We simply pick up the SVG from the map object */
+	var svg = d3.select("#map").select("svg"),
+	g = svg.append("g");
+	
+	d3.json("avianFlu.json", function(dataSet) {
+		/* Add a LatLng object to each item in the dataset */
+		dataSet.forEach(function(d) {
+//            console.log(d.緯度+","+d.經度);
+			d.LatLng = new L.LatLng(+d.緯度,+d.經度); //資料好像不乾淨？要加個+才能運作
+//            console.log(d.LatLng);
+		})
+		
+        
+        bind(dataSet);
+        render();
+        
+        
+        //bind，圓的顯現與否在這裡就決定了
+        function bind(dataSet){
+            		var feature = g.selectAll("circle")
+			                       .data(dataSet);
+        
+                        feature.enter().append("circle");
+                        feature.exit().remove();
+
+        }
+
+        
+        //render，只管理形式
+        function render(){
+            
+                    //圓球大小的比例尺
+                    var rScale = d3.scale.linear()
+                    .domain([d3.min(dataSet,function(d){
+                        return d.死亡及撲殺數;
+                    }),d3.max(dataSet,function(d){
+                        return d.死亡及撲殺數;
+                    })])
+                    .range([5,30]);
+            
+            
+            
+            		g.selectAll("circle").attr({
+                                    stroke: "black",
+                                    opacity: .6,
+                                    fill: function(d){
+                                                if(d.病毒種類==="H5N1"){
+                                                    return "black";
+                                                }else if(d.病毒種類==="H5N8"){
+                                                      return "red";
+                                                }else if(d.病毒種類==="H5N2"){
+                                                      return "yellow";
+                                                }else if(d.病毒種類==="H5N6"){
+                                                      return "blue";
+                                                }else if(d.病毒種類==="H5N3"){
+                                                      return "green";
+                                                }else{
+                                                    console.log("有沒分類到的資料");
+                                                }
+                                              },
+                                    r: function(d){
+                                        return rScale(d.死亡及撲殺數);
+                                    }
+                                });
+
+        }
+
+   
+		
+		map.on("viewreset", update);
+		update();
+
+
+		function update() {
+            
+			g.selectAll("circle").attr({
+             "transform": function(d) { 
+                            return "translate("+ 
+                                map.latLngToLayerPoint(d.LatLng).x +","+ 
+                                map.latLngToLayerPoint(d.LatLng).y +")";
+                          }
+            })
+		}
+        
+        
+
+              
+        //判斷checkbox狀態，篩選
+        var H5N1dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N1";
+        });
+        var H5N2dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N2";
+        });
+        var H5N3dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N3";
+        });
+         var H5N6dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N6";
+        });
+         var H5N8dataSet = dataSet.filter(function(d){
+                  return d.病毒種類 === "H5N8";
+        });
+        
+        
+        //觸發事件，病毒種類被勾選後就更新資料集
+        d3.select("#checkboxH5N1").on("change",updateDataSet);
+        d3.select("#checkboxH5N2").on("change",updateDataSet);
+        d3.select("#checkboxH5N3").on("change",updateDataSet);
+        d3.select("#checkboxH5N6").on("change",updateDataSet);
+        d3.select("#checkboxH5N8").on("change",updateDataSet);
+        
+//        //觸發事件，選好日期、按下按鈕後更新資料集
+//        d3.select("#dateButton").on("click",updateDataSet);
+ 
+        var newDataSet = []; //永遠拿來存最新的資料
+        var temporary = []; //暫時的容器，用在日期篩選過程
+        
+        //test
+         //時間篩選
+        var startDate = document.getElementById("startDate").value;
+        var endDate = document.getElementById("endDate").value;
+        console.log("初始設定時間是："+startDate+","+endDate);
+        
+
+        
+        //點選時間篩選器之後，就直接更新最新的時間狀態
+        d3.select("#startDate").on("change",updateDataSet);
+        d3.select("#endDate").on("change",updateDataSet);
+        
+        //test
+        
+        
+
+        function updateDataSet(){
+            newDataSet.length = 0; //每次都要重新讀，先清乾淨
+            temporary.length = 0; //temporary也要清乾淨，不然會一直停在舊的
+            
+            
+            //病毒種類的篩選
+
+            if(d3.select("#checkboxH5N1").property("checked")){
+                    newDataSet = newDataSet.concat(H5N1dataSet);    //用cancat，可以把內容一直接到array裡
+                }
+            if(d3.select("#checkboxH5N2").property("checked")){
+                    newDataSet = newDataSet.concat(H5N2dataSet);
+                }
+            if(d3.select("#checkboxH5N3").property("checked")){
+                    newDataSet = newDataSet.concat(H5N3dataSet);
+                }
+            if(d3.select("#checkboxH5N6").property("checked")){
+                    newDataSet = newDataSet.concat(H5N6dataSet);
+                }
+            if(d3.select("#checkboxH5N8").property("checked")){
+                    newDataSet = newDataSet.concat(H5N8dataSet);
+                }
+            
+            
+            
+            //先讀取最新的時間範圍
+            startDate = document.getElementById("startDate").value;
+            endDate = document.getElementById("endDate").value;
+            console.log("現在設定的起訖時間是："+startDate+","+endDate);
+            
+            
+            
+            //時間的篩選
+            for(var i=0; i<newDataSet.length; i++){
+                
+                newDataSet[i].爆發日期 = new Date(newDataSet[i].爆發日期); //把每一筆資料的日期變成可以讀的形式
+                
+                //判斷時間是否在選定的區間內，也要記得把選定的日期也變成可讀的形式
+                if(newDataSet[i].爆發日期>= new Date(startDate)
+                   && newDataSet[i].爆發日期<= new Date(endDate)){
+                    
+                    //用一個暫時的容器裝這些日期有符合的資料
+                    temporary = temporary.concat(newDataSet[i]);
+                    
+                    
+//                    console.log("暫時容器的長度："+temporary.length);
+                    
+                }else{
+                    console.log("用日期篩掉了資料");
+                }
+            }
+            
+            //把最新的資料傳回去，以利後續綁定畫圖
+            newDataSet = temporary;
+            
+            
+            //篩選完了
+            console.log("現在篩選的資料有："+newDataSet.length+"筆");
+            bind(newDataSet); //經過條件篩過的資料去做綁定
+            render();  //還是要畫，去設定屬性，不然只有空的circle
+            update();  //讓circle到該去的位置上
+
+        }
+      
+        //確認資料用
+        var checkVirus=dataSet.map(function(d){
+          return d.病毒種類;
+        });
+
+        
+        //確認病毒總共有幾種
+        var uniqueVirus = unique(checkVirus);
+//        console.log(uniqueVirus);//["H5N1", "H5N2", "H5N3", "H5N6", "H5N8"]
+
+            function unique(array){
+              var n = []; 
+              for(var i = 0; i < array.length; i++){
+                if (n.indexOf(array[i]) == -1){
+                  n.push(array[i]);
+                }
+              }
+              return n;
+            }
+        
+        
+        
+        
+        
+        
+	})//讀入dataSet	
+        
+        
+        
+        
+        
+        
+</script>
+</body>
+</html>
