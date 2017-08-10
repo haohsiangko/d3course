@@ -17,127 +17,158 @@
           fill: black;
         }
         
+        #tooltip, #tooltip_4{
+          position: absolute;
+          /* left: 20px; */
+          /* top:  100px; */
+          background: #fff;
+          width: 150px;
+          height: auto;
+          padding: 0px 10px;
+          border-radius: 5px;
+          box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        }
+        
+         #tooltip.hidden, #tooltip_4.hidden{
+          display: none;
+        } 
+        
     </style>
 </head>
 <body>
     <h1>作業四（柯皓翔）</h1>
     <h3>例題1</h3>
-<!--    <svg width="900" height="400"></svg>-->
+    <svg width="900" height="400" id="svg1"></svg>
     <script>
         
-//        d3.json("invoice-taipei.json", function(dataSet){
-//
-//            
-//                var svg = d3.select("body>svg");
-//            
-//
-//               
-//                //長條圖格式設定
-//                var barH = 20;
-//                var barP = 5;
-//                var barOriginX = 300;
-//                var barOriginY = 10;
-//                var textOriginX = barOriginX-20;
-//                var textOriginY = barOriginY + barH*0.8;
-//            
-//            
-//                //建立X軸群組
-//                d3.select("svg")
-//                  .append("g")
-//                  .attr({
-//                     id: "axisX" 
-//                });
-//                var x = barOriginX;  //x軸平移
-//                var y = barOriginY + (barH+barP)*11 //x軸平移
-//
-//
-//                //先做篩選
-//                var fDataSet = dataSet.filter(function(d){
-//                           return d.date === "2016/8/1" && 
-//                                  d.cid === "A" &&
-//                                  d.amount >1000000000;
-//                    });
-//            
-//                //綁定然後畫圖
-//                bind(fDataSet);
-//                render();
-//            
-//
-//                //綁定函數
-//                function bind(dataSet){
-//                        //status1
-//                        var selection = d3.select("body>svg")
-//                                    .selectAll("g.bar1")
-//                                    .data(dataSet);
-//
-//                        //status2 補上少的
-//                        selection.enter().append("g").attr({class: "bar1"}); //class名稱記得加""
-//
-//                        //status3 刪掉多的
-//                        selection.exit().remove();
-//                }
-//
-//                //畫圖函數
-//                function render(){
-//                        //比例尺縮放
-//                        var xScale=d3.scale.linear()
-//                                     .domain([0,d3.max(fDataSet, function(d){return d.amount;})])
-//                                     .range([0,300]);//最長300
-//                    
-//                        //長條
-//                        d3.selectAll("g.bar1")//用已經生成的群組及類別
-//                            .append("rect") //會去父層找綁定，生成長條
-//                            .attr({
-//                                x: function(d){return barOriginX;},
-//                                y: function(d,i){return barOriginY + (barH+barP)*i;},
-//                                width: function(d){return xScale(d.amount);},
-//                                height: function(d){return barH;},
-//                                fill: function(d){return "red";}
-//                            }); 
-//                    
-//                        //文字：產業別
-//                        d3.selectAll("g.bar1")
-//                            .append("text") //會去父層找綁定
-//                            .attr({
-//                                x: function(d){return textOriginX;},
-//                                y: function(d,i){return textOriginY + (barH+barP)*i;},
-//                                "text-anchor": "end"
-//                            }).text(function(d){return d.industry;});
-//                    
-//                        //文字：發票數量
-//                        d3.selectAll("g.bar1")
-//                            .append("text") //會去父層找綁定
-//                            .attr({
-//                                x: function(d){return barOriginX + xScale(d.amount)+20;},
-//                                y: function(d,i){return textOriginY + (barH+barP)*i;},
-//                            }).text(function(d){return d.amount;}); 
-//                    
-//                        //建立X軸基本設定
-//                        var axisX = d3.svg
-//                                      .axis()
-//                                      .scale(xScale)
-//                                      .orient("bottom")
-//                                      .ticks(5)
-//                                      .tickFormat(function(d){return d/1000000000+"G";});
-//                     
-//                        //畫出X軸
-//
-//                        d3.select("#axisX")
-//                          .attr("class", "axis")
-//                          .attr("transform", "translate("+x+","+y+")")
-//                          .call(axisX);
-//                       
-//
-//                        
-//                        
-//                }
-//                    
-//           });
+        d3.json("invoice-taipei.json", function(dataSet){
+
+            
+                var svg1 = d3.select("#svg1");
+            
+
+               
+                //長條圖格式設定
+                var barH = 20;
+                var barP = 5;
+                var barOriginX = 300;
+                var barOriginY = 10;
+                var textOriginX = barOriginX-20;
+                var textOriginY = barOriginY + barH*0.8;
+            
+            
+                //建立X軸群組
+                d3.select("#svg1")
+                  .append("g")
+                  .attr({
+                     id: "axisX_1" 
+                });
+                var x = barOriginX;  //x軸平移
+                var y = barOriginY + (barH+barP)*11 //x軸平移
+
+
+                //先做篩選
+                var fDataSet = dataSet.filter(function(d){
+                           return d.date === "2016/8/1" && 
+                                  d.cid === "A" &&
+                                  d.amount >1000000000;
+                    });
+            
+                //綁定然後畫圖
+                bind1(fDataSet);
+                render1();
+            
+
+                //綁定函數
+                function bind1(dataSet){
+                        //status1
+                        var selection = d3.select("#svg1")
+                                    .selectAll("g.bar1")
+                                    .data(dataSet);
+
+                        //status2 補上少的
+                        selection.enter().append("g").attr({class: "bar1"}); //class名稱記得加""
+
+                        //status3 刪掉多的
+                        selection.exit().remove();
+                }
+
+                //畫圖函數
+                function render1(){
+                        //比例尺縮放
+                        var xScale=d3.scale.linear()
+                                     .domain([0,d3.max(fDataSet, function(d){return d.amount;})])
+                                     .range([0,300]);//最長300
+                    
+                        //長條
+                        d3.selectAll("g.bar1")//用已經生成的群組及類別
+                            .append("rect") //會去父層找綁定，生成長條
+                            .attr({
+                                x: function(d){return barOriginX;},
+                                y: function(d,i){return barOriginY + (barH+barP)*i;},
+                                width: function(d){return xScale(d.amount);},
+                                height: function(d){return barH;},
+                                fill: function(d){return "red";}
+                            }); 
+                    
+                        //文字：產業別
+                        d3.selectAll("g.bar1")
+                            .append("text") //會去父層找綁定
+                            .attr({
+                                x: function(d){return textOriginX;},
+                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+                                "text-anchor": "end"
+                            }).text(function(d){return d.industry;});
+                    
+                        //文字：發票數量
+                        d3.selectAll("g.bar1")
+                            .append("text") //會去父層找綁定
+                            .attr({
+                                x: function(d){return barOriginX + xScale(d.amount)+20;},
+                                y: function(d,i){return textOriginY + (barH+barP)*i;},
+                            }).text(function(d){return d.amount;}); 
+                    
+                        //建立X軸基本設定
+                        var axisX_1 = d3.svg
+                                      .axis()
+                                      .scale(xScale)
+                                      .orient("bottom")
+                                      .ticks(5)
+                                      .tickFormat(function(d){return d/1000000000+"G";});
+                     
+                        //畫出X軸
+
+                        d3.select("#axisX_1")
+                          .attr("class", "axis")
+                          .attr("transform", "translate("+x+","+y+")")
+                          .call(axisX_1);
+                       
+
+                        
+                        
+                }
+                    
+           });
     </script>
     <hr>
-    <h3>例題2</h3>
+    <h3 id="ex2">例題2、例題3</h3>
+    
+<!--    提示框-->
+
+          <div id="tooltip" class="hidden">
+          <p><strong id="city">Hello</strong></p>
+          <p id="industry">tooltip</p>
+          </div>  
+   
+          <div id="mySelect"></div>
+
+     
+       
+       
+        
     <script>
-         
+        
+
         // 1. 定義width, height, padding, letterList變數
         var w = 900;
         var h = 600;
@@ -148,11 +179,27 @@
         
         svg();       
         
+        function svg(){
+           d3.select("body").append("svg").attr({width: w, height: h, id: "svg2"});
+            d3.select("#svg2").append("g").append("rect").attr({
+                position: "absolute",
+                y: 0,
+                width: "100%",
+                height: "100%",
+                fill: "white"
+            });
+            d3.select("#svg2").append("g").attr({id: "axisX_2"});
+            d3.select("#svg2").append("g").attr({id: "axisY_2"});
+        }
+        
+
+        
         //3. 用d3讀取csv
         d3.csv("invoice.csv",mid, function(dataSet){
            
            bind(dataSet);
            render(dataSet);
+           btnList(dataSet);
             
         });
         
@@ -162,21 +209,12 @@
             return d;
         }
         
-        function svg(){
-           d3.select("body").append("svg").attr({width: w, height: h});
-            d3.select("svg").append("g").append("rect").attr({
-                width: "100%",
-                height: "100%",
-                fill: "white"
-            });
-            d3.select("svg").append("g").attr({id: "axisX_2"});
-            d3.select("svg").append("g").attr({id: "axisY_2"});
-        }
+        
         
         //4. 建立bind()
 
         function bind(dataSet){
-            var selection = d3.select("svg")
+            var selection = d3.select("#svg2")
                                 .selectAll("circle")
                                 .data(dataSet);
             
@@ -202,13 +240,54 @@
             var fScale = d3.scale.category20();
             
             //6. 建立render()繪圖
-            d3.selectAll("circle")
+            var circles = d3.select("#svg2").selectAll("circle")
               .attr({
                 cx: function(d){return xScale_2(new Date(d.date));},
                 cy: function(d){return yScale_2(d.number);},
                r: function(d){ return rScale(+(d.amount));},
                 fill: function(d){return fScale(d.cid);}
-              })
+              });
+            
+            
+            
+            //抓取例題二那串文字的高度
+            var moveDown = document.getElementById('ex2').offsetTop;
+//            console.log("例題二文字高度是："+moveDown);
+
+          
+            
+            //mouse移入，加入提示框
+            circles.on("mouseover",function(d){
+                
+                //讓位置去吃圓的
+                var tooltipX = +d3.select(this).attr("cx"); //要+
+                var tooltipY = +d3.select(this).attr("cy");                
+            
+                
+    
+                //改變位置
+                d3.select("#tooltip").style({
+                    left: tooltipX+15+"px",
+                    top: tooltipY+moveDown+50+"px"
+                })
+                
+                //替換tooltip內容(選擇其id後，修改內容)
+                d3.select("#city").text(d.city);
+                d3.select("#industry").text(d.industry);
+                
+                //顯現tooltip
+                d3.select("#tooltip").classed("hidden", false);
+//                console.log(d3.select("#tooltip").style("left")+","+d3.select("#tooltip").style("top"));
+                
+            });
+            
+            //mouse移出圓圈
+            circles.on("mouseout",function(d){
+                    d3.select("#tooltip").classed("hidden", true);
+//                    console.log("mouseout!");
+                });
+            
+            
             
             //座標軸
             var axisX_2 = d3.svg.axis().scale(xScale_2).orient("bottom").ticks(10);
@@ -230,13 +309,404 @@
             
             
 
+        }//render
+        
+        function btnList(dataSet){
+            //建立一個資料集，只存行業別
+            var industryDataSet = dataSet.map(function(d){
+                return d.industry;
+            });
+            
+            //把行業別去掉重複，先建立一個unique函數
+            var uniqueDataSet = unique(industryDataSet);
+            
+            //但資料有缺陷，有一筆是空的要去除
+            var finalDataSet = uniqueDataSet.filter(function(d){
+                return d != "";
+            });
+            
+            //bind
+            var selection = d3.select("#mySelect").append("select").selectAll("option").data(finalDataSet);
+            selection.enter().append("option");
+            selection.exit().remove();
+            
+            //render，出現每個項目的文字
+            d3.selectAll("select>option").attr({
+                value: function(d){return d;}
+            }).text(function(d){return d;});
+            
+            
+            var initial = d3.select("select").property("value");
+            update(initial);
+            
+            //選了industry之後觸發，重新綁定畫圖
+            function update(industryName){
+                var newDataSet = dataSet.filter(function(d){
+                    return d.industry === industryName;
+                });
+                
+                bind(newDataSet);
+                render(newDataSet);    
+            }
+            
+            d3.select("select").on("change", function(){
+                //找現在的value
+                var myIndustry = d3.select("select").property("value");//注意寫法
+                update(myIndustry);
+            })
+            
+            
+        }//btnList
+    
+        
+        //原理：建立空陣列，然後比對（用indexOf）每一筆有沒有出現在array，沒有就加入
+        function unique(array){
+            var n=[];
+            array.forEach(function(d){
+                if(n.indexOf(d)===-1){
+                        n.push(d);
+                   }
+            });
+            return n;
         }
-    
-    
     
     </script>
     
+    <hr>
+    <h3 id="ex4">例題4</h3>
     
+              <div id="tooltip_4" class="hidden">
+          <p><strong id="county">縣市</strong></p>
+          <p id="part">部位</p>
+          <p id="case">案例數</p>
+          </div>  
+   
+          <div id="mySelect_4"></div>
+          <div id="div_4"></div>
+
+     
+       
+       
+        
+    <script>
+        
+
+        // 1. 定義width, height, padding, letterList變數
+        var w = 900;
+        var h = 600;
+        var padding = 60;
+        var letterList = ["A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","Q","T","U","V","W","X","Z"];
+        
+        //2. 建立svg()畫布環境
+        
+        svg4();       
+        
+        function svg4(){
+           d3.select("body>#div_4").append("svg").attr({width: w, height: h, id: "svg4"});
+            d3.select("#svg4").append("g").append("rect").attr({
+                position: "absolute",
+                y: 0,
+                width: "100%",
+                height: "100%",
+                fill: "white"
+            });
+            d3.select("#svg4").append("g").attr({id: "axisX_4"});
+            d3.select("#svg4").append("g").attr({id: "axisY_4"});
+        }
+        
+        //test
+        d3.csv("cancer_data.csv",mid2, function(dataSet){
+           
+//         console.log(dataSet);
+           bind4(dataSet);
+           render4(dataSet);
+           btnList4(dataSet);
+            
+        });
+        
+    
+        
+        function mid2(d){
+            d.癌症診斷年 = +d.癌症診斷年;
+            d.平均年齡 = +d.平均年齡;
+            d.年齡中位數 = +d.年齡中位數;
+            d["年齡標準化發生率(WHO2000世界標準人口)(每10萬人口)"] = +d["年齡標準化發生率(WHO2000世界標準人口)(每10萬人口)"];
+            d.癌症發生數 = +d.癌症發生數;
+            d.癌症診斷年 = +d.癌症診斷年;
+            d["粗率(每10萬人口)"] = +d["粗率 (每10萬人口)"];
+            
+            return d;
+        }
+        
+        
+        
+        //4. 建立bind()
+
+        function bind4(dataSet){
+            var selection = d3.select("#svg4")
+                                .selectAll("circle")
+                                .data(dataSet);
+            
+            selection.enter().append("circle");
+            selection.exit().remove();
+        }
+        
+        function render4(dataSet){
+            //5. 定義xScale,yScale,rScale, fScale比例尺(range目的在決定在svg上位置)
+            
+
+
+           var xScale_4 = d3.time.scale()
+                    .domain([new Date("1979-01-01"),new Date("2013-01-01")]) //日期要寫成這樣，不要只寫年!
+                    .range([padding, w-padding]);
+            
+           var yScale_4 = d3.scale.linear()
+                    .domain([0,d3.max(dataSet, function(d){return d.平均年齡;})])
+                    .range([h-padding,padding]);
+           
+            var rScale_4 = d3.scale.linear()
+                    .domain([d3.min(dataSet, function(d){return d.癌症發生數;}),d3.max(dataSet, function(d){return d.癌症發生數;})])
+                    .range([5,30]);
+         
+            var fScale_4 = d3.scale.category20();
+            
+            //6. 建立render()繪圖
+            var circles_4 = d3.select("#svg4").selectAll("circle")
+              .attr({
+                cx: function(d){return xScale_4(new Date(d.癌症診斷年+"-01-01"));},
+                cy: function(d){return yScale_4(d.平均年齡);},
+               r: function(d){ return rScale_4(+(d.癌症發生數));},
+                fill: function(d){return fScale_4(d.縣市別);}
+              });
+            
+            
+            
+            //抓取例題二那串文字的高度
+            var moveDown_4 = document.getElementById('ex4').offsetTop;
+//            console.log("例題二文字高度是："+moveDown);
+
+          
+            
+            //mouse移入，加入提示框
+            circles_4.on("mouseover",function(d){
+                
+                //讓位置去吃圓的
+                var tooltipX = +d3.select(this).attr("cx"); //要+
+                var tooltipY = +d3.select(this).attr("cy");                
+    
+                //改變位置
+                d3.select("#tooltip_4").style({
+                    left: tooltipX+15+"px",
+                    top: tooltipY+moveDown_4+50+"px"
+                })
+                
+                //替換tooltip內容(選擇其id後，修改內容)
+                d3.select("#county").text(d.縣市別);
+                d3.select("#part").text(d.癌症別);
+                d3.select("#case").text("案例數："+d.癌症發生數);
+                
+                //顯現tooltip
+                d3.select("#tooltip_4").classed("hidden", false);
+//                console.log(d3.select("#tooltip").style("left")+","+d3.select("#tooltip").style("top"));
+                
+            });
+            
+            //mouse移出圓圈
+            circles_4.on("mouseout",function(d){
+                    d3.select("#tooltip_4").classed("hidden", true);
+//                    console.log("mouseout!");
+                });
+            
+            
+            
+            //座標軸
+            var axisX_4 = d3.svg.axis().scale(xScale_4).orient("bottom").ticks(10);
+            
+            var axisY_4 = d3.svg.axis().scale(yScale_4).orient("left").tickFormat(function(d){
+                return d+"歲";
+            });
+            
+            
+            d3.select("#axisX_4").attr({
+                class: "axis",
+                transform: "translate(0,"+(h-padding+10)+")"
+            }).call(axisX_4);
+            
+            d3.select("#axisY_4").attr({
+                "class": "axis",
+                "transform": "translate("+(padding-10)+",0)"
+            }).call(axisY_4);
+            
+            
+
+        }//render
+        
+        function btnList4(dataSet){
+            //建立一個資料集，只存別
+            var cancerDataSet = dataSet.map(function(d){
+                return d.癌症別;
+            });
+            
+            //把行業別去掉重複，先建立一個unique函數
+            var uniqueDataSet = unique(cancerDataSet);
+            
+            //但資料有缺陷，有一筆是空的要去除
+            var finalDataSet = uniqueDataSet.filter(function(d){
+                return d != "";
+            });
+            
+            //bind
+            var selection = d3.select("#mySelect_4").append("select").attr({id: "select4"}).selectAll("option").data(finalDataSet);
+            selection.enter().append("option");
+            selection.exit().remove();
+            
+            //render，出現每個項目的文字
+            d3.selectAll("#select4>option").attr({
+                value: function(d){return d;}
+            }).text(function(d){return d;});
+            
+            
+            
+            //選了industry之後觸發，重新綁定畫圖
+            function update(cancerName){
+                var newDataSet = dataSet.filter(function(d){
+                    return d.癌症別 === cancerName;
+                });
+                
+                bind4(newDataSet);
+                render4(newDataSet);    
+            }
+            
+            var initial = d3.select("#select4").property("value");
+            update(initial);
+            
+            d3.select("#select4").on("change", function(){
+                //找現在的value
+                var myCancer = d3.select("#select4").property("value");//注意寫法
+                update(myCancer);
+            })
+            
+            
+        }//btnList
+    
+        
+        //原理：建立空陣列，然後比對（用indexOf）每一筆有沒有出現在array，沒有就加入
+        function unique(array){
+            var n=[];
+            array.forEach(function(d){
+                if(n.indexOf(d)===-1){
+                        n.push(d);
+                   }
+            });
+            return n;
+        }
+    
+    </script>
+
+<hr>
+<h3>例題5</h3>
+<div id="div_5"></div>
+<script>
+            var svg5 = d3.select("#div_5").append("svg").attr({
+               width: "340",
+               height: "340",
+              id: "svg5"
+            });
+
+            svg5.append("g").append("rect").attr({
+              fill: "white",
+              width: "100%",
+              height: "100%"
+            });
+
+
+
+            var easeArr = ["linear", "quad", "cubic", "sin", "exp", "circle", "elastic", "back", "bounce"];
+
+            bind5(easeArr);
+            render5();
+
+            function bind5(dataSet){
+              var selection_circle = d3.select("#svg5").selectAll("circle").data(dataSet);
+              var selection_text = d3.select("#svg5").selectAll("text").data(dataSet);
+              var selection_line = d3.select("#svg5").selectAll("line").data(dataSet);
+
+              // 初始化設定
+              selection_line.enter().append("line").attr({
+                    x1: 100,
+                    y1: function(d,i){
+                       return 20+i*35;
+                    },
+                    x2: 300,
+                    y2: function(d,i){
+                       return 20+i*35;
+                    },
+                    stroke: "lightgreen"
+               }).text(function(d){
+                  return d;
+               });
+              selection_line.exit().remove();
+
+              selection_circle.enter().append("circle").attr({
+                    cx: 100,
+                    cy: function(d,i){
+                       return 20+i*35;
+                    },
+                    r: 15,
+                    fill: "gold"
+               });
+
+
+              selection_circle.exit().remove();
+
+              selection_text.enter().append("text").attr({
+                    x: 5,
+                    y: function(d,i){
+                       return 25+i*35;
+                    },
+                    fill: "black"
+               }).text(function(d){
+                  return d;
+               });
+              selection_text.exit().remove();
+
+
+            } 
+
+            function render5(){
+
+              //需要動畫的設定
+
+
+                var myCircle =  d3.select("#svg5").selectAll("circle");
+
+
+
+
+
+              myCircle.on("click", function(d){
+
+                console.log(d);  
+               update(d);
+
+                function update(d){
+                nowPosition = myCircle.attr("cx");
+                if(nowPosition==="100"){
+                  myCircle.transition().duration(1000).ease(d).attr({cx: "300"});
+                }
+                if(nowPosition==="300"){
+                  myCircle.transition().duration(1000).ease(d).attr({cx: "100"});
+                }
+                }
+
+
+              });
+
+
+            }
+
+</script>
+
 
 </body>
 </html>
