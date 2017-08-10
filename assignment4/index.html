@@ -151,7 +151,7 @@
            });
     </script>
     <hr>
-    <h3 id="ex2">例題2、例題3</h3>
+    <h3 id="ex2">例題2、例題3、例題4</h3>
     
 <!--    提示框-->
 
@@ -373,7 +373,7 @@
     </script>
     
     <hr>
-    <h3 id="ex4">例題4</h3>
+    <h3 id="ex4">例題5</h3>
     
               <div id="tooltip_4" class="hidden">
           <p><strong id="county">縣市</strong></p>
@@ -604,7 +604,7 @@
     </script>
 
 <hr>
-<h3>例題5</h3>
+<h3>例題6</h3>
 <div id="div_5"></div>
 <script>
             var svg5 = d3.select("#div_5").append("svg").attr({
@@ -681,23 +681,18 @@
                 var myCircle =  d3.select("#svg5").selectAll("circle");
 
 
-
-
-
               myCircle.on("click", function(d){
 
-                console.log(d);  
-               update(d);
-
-                function update(d){
-                nowPosition = myCircle.attr("cx");
+                console.log(d);  //linear...
+                   
+                nowPosition = d3.select(this).attr("cx");
                 if(nowPosition==="100"){
-                  myCircle.transition().duration(1000).ease(d).attr({cx: "300"});
+                  d3.select(this).transition().duration(1000).ease(d).attr({cx: "300"});
                 }
                 if(nowPosition==="300"){
-                  myCircle.transition().duration(1000).ease(d).attr({cx: "100"});
+                  d3.select(this).transition().duration(1000).ease(d).attr({cx: "100"});
                 }
-                }
+                
 
 
               });
