@@ -17,11 +17,32 @@
 <!--    http要加s-->
     <script src="https://d3js.org/d3.v3.min.js"></script> 
 
+   
+    <style>
+    #tooltip{
+          position: absolute;
+          /* left: 20px; */
+          /* top:  100px; */
+          background: #fff;
+          width: 150px;
+          height: auto;
+          padding: 0px 10px;
+          border-radius: 5px;
+          box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        }
+        
+         #tooltip.hidden{
+          display: none;
+        } 
+    </style>
     
     
 </head>
 <body>
+    
+    
 
+    
 	<div id="map" style="width: 900px; height: 600px"></div>
 	<h3>勾選病毒種類做篩選</h3>
 	<input type="checkbox" id="checkboxH5N1" class="options" value="H5N1">H5N1(黑)
@@ -42,7 +63,16 @@
     <input type="date" id="endDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2017-07-31">
 <!--  <button type="button" id="dateButton">啟動篩選器</button>-->
         
-            
+    
+               
+   <div id="tooltip" class="hidden">
+        <p><strong id="tooltip_virus">病毒種類</strong></p>
+        <p id="tooltip_county">縣市</p><!--到時候county, township都在這行--> 
+        <p id="tooltip_date">爆發日期</p>
+        <p id="tooltip_species">家禽種類</p>
+        <p id="tooltip_death">死亡及撲殺數</p>
+    </div>                
+                                           
                     
 	<script type="text/javascript">        
 
@@ -102,7 +132,7 @@
             
             
             
-            		g.selectAll("circle").attr({
+            		var circles = g.selectAll("circle").attr({
                                     stroke: "black",
                                     opacity: .6,
                                     fill: function(d){
@@ -124,6 +154,40 @@
                                         return rScale(d.死亡及撲殺數);
                                     }
                                 });
+            
+                    circles.on("mouseover",function(d){
+//                        console.log(d);
+                        console.log(this);
+                        
+                    
+//                       //讀取圓的位置，要這樣寫，不能用this，要用d
+//                        var tooltipX = map.latLngToLayerPoint(d.LatLng).x;
+//                        var tooltipY = map.latLngToLayerPoint(d.LatLng).y;
+//                        
+//                        console.log(tooltipX+","+tooltipY);
+                        
+                        //改變tooltip位置
+                        d3.select("#tooltip").style({
+                            left: 700+20+"px", //要這樣寫
+                            top: 0+20+"px"
+                        });
+                        
+
+                        
+                        //替換內容
+                        d3.select("#tooltip_virus").text(d.病毒種類);
+                        d3.select("#tooltip_county").text(d.縣市+d.鄉鎮市區);
+                        d3.select("#tooltip_date").text("爆發日期："+d.爆發日期);
+                        d3.select("#tooltip_species").text("感染家禽："+d.家禽種類);
+                        d3.select("#tooltip_death").text("死亡及撲殺數："+d.死亡及撲殺數);
+                        
+                        //顯現
+                        d3.select("#tooltip").classed("hidden", false);           
+                    });
+            
+                    circles.on("mouseout",function(){
+                        d3.select("#tooltip").classed("hidden", true);
+                    });
 
         }
 
@@ -141,7 +205,8 @@
                                 map.latLngToLayerPoint(d.LatLng).x +","+ 
                                 map.latLngToLayerPoint(d.LatLng).y +")";
                           }
-            })
+            });
+            
 		}
         
         
