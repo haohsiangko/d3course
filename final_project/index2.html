@@ -1,11 +1,25 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="zh-Hant-TW">
 <head>
-	<title>d3.js with leaflet.js</title>
-    <meta charset="utf-8">
-
    
-<!--   leaflet版本用0.7.7版才OK-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>圖解台灣禽流感疫情</title>
+    
+<!--匯入bootstrap-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/customize.css">
+    
+<!--匯入jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+<!--匯入bootstrap javascript-->  
+    <script src="js/bootstrap.min.js"></script>
+    
+    <!--   leaflet版本用0.7.7版才OK-->
     <link 
         rel="stylesheet" 
         href="leaflet/leaflet.css"
@@ -16,9 +30,8 @@
     
 <!--    http要加s-->
     <script src="https://d3js.org/d3.v3.min.js"></script> 
-
-   
-    <style>
+    
+     <style>
     #tooltip, #tooltip2{
           position: absolute;
           /* left: 20px; */
@@ -36,55 +49,116 @@
         } 
     </style>
     
-    
 </head>
 <body>
-    
-    
+<div class="container">
+  
+  <nav class="nav navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> 
+                </button>
+                <a class="navbar-brand" href="./index.html">圖解近年台灣禽流感疫情</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.html">前言</a></li>
+                    <li><a href="./index2.html">疫情地圖</a></li>
+                    <li><a href="./index3.html">後記</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav> 
+  
+  <div class="row">
+                <div class="preface">
+                        <div class="col-md-8">
+                            <h3>從地圖看禽流感疫情</h3>
+                            <br>
+                            <p>這次的專題我們以政府各次通報OIE的文件為基準，加以爬梳整理及視覺化，帶大家看看近五年（2012年至今）國內禽流感疫情有多嚴重？如何隨時間變化？在分佈上又有什麼樣的特性？</p>
+                            
+                            <!--<svg width="727.5" height="545.63"><rect width="100%" height="100%" fill="gold"></rect></svg>-->
+                               
+                            <div id="map" style="width: 727.5px; height: 545.63px"></div>   
 
-    
-	<div id="map" style="width: 970px; height: 600px"></div>
-	<h3 id="nowSelection">現在篩選的資料筆數</h3>
-	<h3>勾選病毒種類做篩選</h3>
-	<input type="checkbox" id="checkboxH5N1" class="options" value="H5N1" checked>H5N1(黑)
-	 <input type="checkbox" id="checkboxH5N2" class="options" value="H5N2" checked>H5N2(黃)
-	 <input type="checkbox" id="checkboxH5N3" class="options" value="H5N3" checked>H5N3(綠)
-	 <input type="checkbox" id="checkboxH5N6" class="options" value="H5N6" checked>H5N6(藍)
-	 <input type="checkbox" id="checkboxH5N8" class="options" value="H5N8" checked>H5N8(紅)
-    
-    <br>
-    
-    <h3>設定想觀察的時間區間</h3>
-<!--    日期篩選-->
-<!--   開始時間預設為2012/1/1-->
-    <label for="startDate">開始日期：</label>   
-    <input type="date" id="startDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2012-01-01">
-<!--    結束時間預設為2017/7/31-->
-    <label for="endDate">結束日期：</label>   
-    <input type="date" id="endDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2017-07-31">
-<!--  <button type="button" id="dateButton">啟動篩選器</button>-->
-        
-    
-<!--     tooltip          -->
-   <div id="tooltip" class="hidden">
-        <p><strong id="tooltip_virus">病毒種類</strong></p>
-        <p id="tooltip_county">縣市</p><!--到時候county, township都在這行--> 
-        <p id="tooltip_date">爆發日期</p>
-        <p id="tooltip_species">家禽種類</p>
-        <p id="tooltip_death">死亡及撲殺數</p>
-    </div>                
-    
-    <div id="pie_bg"></div>
-    <!--     tooltip2         -->
-   <div id="tooltip2" class="hidden">
-        <p><strong id="tooltip2_county">縣市</strong></p>
-        <p id="tooltip2_case">案例數</p> 
-        <p id="tooltip2_rate">所佔比例</p>
-    </div>                                                      
-                                          
-                                           
-<!--    pie_bg                          -->
-                    
+                            <br>
+                            <br>
+                            <br>
+                            
+                            
+
+
+                       </div>    
+                    <div class="col-md-4">
+                          <br>
+                           <h4 id="nowSelection">現在篩選的資料筆數</h4>
+                           <br>
+                            <h4>勾選病毒種類做篩選</h4>
+                            <input type="checkbox" id="checkboxH5N1" class="options" value="H5N1" checked>H5N1(黑)
+                             <input type="checkbox" id="checkboxH5N2" class="options" value="H5N2" checked>H5N2(黃)
+                             <input type="checkbox" id="checkboxH5N3" class="options" value="H5N3" checked>H5N3(綠)
+                             <br>
+                             <input type="checkbox" id="checkboxH5N6" class="options" value="H5N6" checked>H5N6(藍)
+                             <input type="checkbox" id="checkboxH5N8" class="options" value="H5N8" checked>H5N8(紅)
+
+                            <br>
+                            <br>
+
+                            <h4>設定想觀察的時間區間</h4>
+                        <!--    日期篩選-->
+                        <!--   開始時間預設為2012/1/1-->
+                            <label for="startDate">開始日期：</label>   
+                            <input type="date" id="startDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2012-01-01">
+                            <br>
+                        <!--    結束時間預設為2017/7/31-->
+                            <label for="endDate">結束日期：</label>   
+                            <input type="date" id="endDate" placeholder="2014-09-18" min="2012-01-01" max="2017-07-31" value="2017-07-31">
+                        <!--  <button type="button" id="dateButton">啟動篩選器</button>-->
+                        
+                        <hr>
+                        
+                        <!--<svg width="335" height="335"><rect width="100%" height="100%" fill="gold"></rect></svg>-->
+                        
+                         <div id="pie_bg"></div>
+
+
+                        <!--     tooltip          -->
+                           <div id="tooltip" class="hidden">
+                                <p><strong id="tooltip_virus">病毒種類</strong></p>
+                                <p id="tooltip_county">縣市</p><!--到時候county, township都在這行--> 
+                                <p id="tooltip_date">爆發日期</p>
+                                <p id="tooltip_species">家禽種類</p>
+                                <p id="tooltip_death">死亡及撲殺數</p>
+                            </div>                
+
+                            
+                            <!--     tooltip2         -->
+                           <div id="tooltip2" class="hidden">
+                                <p><strong id="tooltip2_county">縣市</strong></p>
+                                <p id="tooltip2_case">案例數</p> 
+                                <p id="tooltip2_rate">所佔比例</p>
+                            </div>                                                
+
+                    </div>  
+                    <!--col-md-4-->
+                        
+                        
+        </div>
+                   
+
+             
+      </div>
+      <!--row-->
+      
+
+      
+   
+</div>
+<!--container-->
+
 	<script type="text/javascript">   
         
 
@@ -108,8 +182,8 @@
 	
         
     //圓餅圖專區
-    var w = 500;
-    var h = 500;
+    var w = 335;
+    var h = 335;
     var padding = 30;
         
         
@@ -118,7 +192,7 @@
         
         
     function pie_bg(){
-        d3.select("body>#pie_bg").append("svg").attr({
+        d3.select("body>div>div>div>div>#pie_bg").append("svg").attr({
             width: w,
             height: h,
             id: "pie_svg"
@@ -126,7 +200,7 @@
         d3.select("#pie_svg").append("rect").attr({
            width: "100%",
            height: "100%",
-           fill: "#eee"
+           fill: "#FFF"
         });
     }
         
@@ -256,12 +330,13 @@
                         //改變圓的顏色
                         d3.select(this).style("fill","black");
                         
-                        
+                        var moveDown = document.getElementById('map').offsetTop;
+                        var moveRight = document.getElementById('map').offsetLeft;
                         
                         //改變tooltip位置
                         d3.select("#tooltip").style({
-                            left: 700+20+"px", //要這樣寫
-                            top: 0+20+"px"
+                            left: moveRight-205-15+"px", //要這樣寫
+                            top: moveDown+15+"px"
                         });
                         
 
@@ -347,8 +422,8 @@
             
 //            console.log(dataSet_afterall);
             
-            var outerR = 200;
-            var innerR = 100;
+            var outerR = 150;
+            var innerR = 50;
             var arc = d3.svg.arc()
                             .outerRadius(outerR)
                             .innerRadius(innerR);
@@ -370,10 +445,14 @@
                         d3.select(this).style("opacity", "0.7");
 
                        
+                        var moveDown = document.getElementById('pie_bg').offsetTop;
+                        var moveRight = document.getElementById('pie_bg').offsetLeft;
+                        
+                        
                         //改變tooltip位置
                         d3.select("#tooltip2").style({
-                            left: 700+"px", //要這樣寫
-                            top: 1000+"px"
+                            left: 335+"px", //要這樣寫
+                            top: moveDown+"px"
                         });
                         
 
@@ -605,6 +684,11 @@
         
         
         
-</script>
+</script>  
+ 
+
+
+
+
 </body>
 </html>
