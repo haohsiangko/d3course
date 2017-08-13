@@ -1,0 +1,338 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>作業四（柯皓翔）</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <style>
+        body{
+            background: #eee;
+        }
+        .axis path, .axis line{
+          fill: none;
+          stroke: black;
+        }
+        .axis text{
+          font-size: 12px;
+          fill: black;
+        }
+        
+        #tooltip, #tooltip_4{
+          position: absolute;
+          /* left: 20px; */
+          /* top:  100px; */
+          background: #fff;
+          width: 150px;
+          height: auto;
+          padding: 0px 10px;
+          border-radius: 5px;
+          box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        }
+        
+         #tooltip.hidden, #tooltip_4.hidden{
+          display: none;
+        } 
+        
+    </style>
+</head>
+<body>
+    <h1>0813</h1>
+    
+    
+    <hr>
+    <h3 id="ex4">例題5</h3>
+    
+              <div id="tooltip_4" class="hidden">
+          <p><strong id="county">縣市</strong></p>
+          <p id="part">部位</p>
+          <p id="case">案例數</p>
+          </div>  
+   
+          <div id="mySelect_4"></div>
+          <div id="div_4"></div>
+          
+          
+          <input type="button" value="Play" id="playBtn">
+
+     
+       
+       
+        
+    <script>
+        
+
+        // 1. 定義width, height, padding, letterList變數
+        var w = 900;
+        var h = 600;
+        var padding = 60;
+        var letterList = ["A","B","C","D","E","F","G","H","I","J","K","M","N","O","P","Q","T","U","V","W","X","Z"];
+        
+        var xScale_4, yScale_4,rScale_4,fScale_4;
+         
+        
+        
+        
+        //2. 建立svg()畫布環境
+        
+        svg4();       
+        
+        function svg4(){
+           d3.select("body>#div_4").append("svg").attr({width: w, height: h, id: "svg4"});
+            d3.select("#svg4").append("g").append("rect").attr({
+                position: "absolute",
+                y: 0,
+                width: "100%",
+                height: "100%",
+                fill: "white"
+            });
+            d3.select("#svg4").append("g").attr({id: "axisX_4"});
+            d3.select("#svg4").append("g").attr({id: "axisY_4"});
+        }
+        
+        //test
+        d3.csv("cancer_data.csv",mid2, function(dataSet){
+            
+           xScale_4 = d3.scale.linear()
+                    .domain([d3.min(dataSet,function(d){return d.crude_rate;}),
+                            d3.max(dataSet,function(d){return d.crude_rate;})]) 
+                    .range([padding, w-padding]);
+            
+              yScale_4 = d3.scale.linear()
+                    .domain([0,d3.max(dataSet, function(d){return d.avg_age;})])
+                    .range([h-padding,padding]);
+           
+             rScale_4 = d3.scale.linear()
+                    .domain([d3.min(dataSet, function(d){return d.count;}),d3.max(dataSet, function(d){return d.count;})])
+                    .range([5,10]);
+         
+            fScale_4 = d3.scale.category20();
+           
+//         console.log(dataSet);
+           bind4(dataSet);
+           render4(dataSet);
+           btnList4(dataSet);
+            
+        });
+        
+    
+        
+        function mid2(d){
+            d.date = +d.date;
+            d.avg_age = +d.avg_age;
+            d.mid_age = +d.mid_age;
+            d.incidence = +d.incidence;
+            d.crude_rate = +d.crude_rate;
+
+            
+            return d;
+        }
+        
+        
+        
+        //4. 建立bind()
+
+        function bind4(dataSet){
+            var selection = d3.select("#svg4")
+                                .selectAll("circle")
+                                .data(dataSet);
+            
+            selection.enter().append("circle");
+            selection.exit().remove();
+        }
+        
+        
+       
+        
+        
+        function render4(dataSet){
+            //5. 定義xScale,yScale,rScale, fScale比例尺(range目的在決定在svg上位置)
+            
+         
+            
+            //6. 建立render()繪圖
+            var circles_4 = d3.select("#svg4").selectAll("circle")
+              .attr({
+                cx: function(d){return xScale_4(d.crude_rate);},
+                cy: function(d){return yScale_4(d.avg_age);},
+                r: function(d){ return rScale_4(+(d.count));},
+                fill: function(d){return fScale_4(d.city);}
+              });
+            
+            
+            
+            //抓取例題二那串文字的高度
+            var moveDown_4 = document.getElementById('ex4').offsetTop;
+//            console.log("例題二文字高度是："+moveDown);
+
+
+            //mouse移入，加入提示框
+            circles_4.on("mouseover",function(d){
+                
+                //讓位置去吃圓的
+                var tooltipX = +d3.select(this).attr("cx"); //要+
+                var tooltipY = +d3.select(this).attr("cy");                
+    
+                //改變位置
+                d3.select("#tooltip_4").style({
+                    left: tooltipX+15+"px",
+                    top: tooltipY+moveDown_4+50+"px"
+                })
+                
+                //替換tooltip內容(選擇其id後，修改內容)
+                d3.select("#county").text(d.city);
+                d3.select("#part").text(d.category);
+                d3.select("#case").text("案例數："+d.count);
+                
+                //顯現tooltip
+                d3.select("#tooltip_4").classed("hidden", false);
+//                console.log(d3.select("#tooltip").style("left")+","+d3.select("#tooltip").style("top"));
+                
+            });
+            
+            //mouse移出圓圈
+            circles_4.on("mouseout",function(d){
+                    d3.select("#tooltip_4").classed("hidden", true);
+//                    console.log("mouseout!");
+                });
+            
+            
+            
+            //座標軸
+            var axisX_4 = d3.svg.axis().scale(xScale_4).orient("bottom").ticks(10);
+            
+            var axisY_4 = d3.svg.axis().scale(yScale_4).orient("left").tickFormat(function(d){
+                return d+"歲";
+            });
+            
+            
+            d3.select("#axisX_4").attr({
+                class: "axis",
+                transform: "translate(0,"+(h-padding+10)+")"
+            }).call(axisX_4);
+            
+            d3.select("#axisY_4").attr({
+                "class": "axis",
+                "transform": "translate("+(padding-10)+",0)"
+            }).call(axisY_4);
+            
+            
+
+        }//render
+        
+        function btnList4(dataSet){
+
+            var cancerDataSet = dataSet.map(function(d){
+                return d.category;
+            });
+            
+            //把行業別去掉重複，先建立一個unique函數
+            var uniqueDataSet = unique(cancerDataSet);
+            
+            //但資料有缺陷，有一筆是空的要去除
+            var finalDataSet = uniqueDataSet.filter(function(d){
+                return d != "";
+            });
+            
+            //bind
+            var selection = d3.select("#mySelect_4").append("select").attr({id: "select4"}).selectAll("option").data(finalDataSet);
+            selection.enter().append("option");
+            selection.exit().remove();
+            
+            //render，出現每個項目的文字
+            d3.selectAll("#select4>option").attr({
+                value: function(d){return d;}
+            }).text(function(d){return d;});
+            
+            
+            
+            //選了industry之後觸發，重新綁定畫圖
+            function update(cancerName){
+                var newDataSet = dataSet.filter(function(d){
+                    return d.category === cancerName;
+                });
+                
+                bind4(newDataSet);
+                render4(newDataSet);    
+                
+                d3.select("#playBtn").on("click",function(){
+                    
+                    var nowYear = dataSet.map(function(d){
+                        return d.date;
+                    }); 
+                    
+                    nowYear = unique(nowYear);
+                    console.log(nowYear);
+                    
+                    var idx = 0;
+                    
+                    d3.select("#svg4").append("text").attr({
+                        "id": "yearText",
+                        x: w-padding,
+                        y: h-padding,
+                        "font-size": 200,
+                        "opacity": 0.2,
+                        "text-anchor": "end"
+                    });
+                    
+                    window.setInterval(function(){
+                        
+                        var categoryName = d3.select("#select4").property("value");
+                        var newDataSet = dataSet.filter(
+                            function(d){
+                                return d.category===categoryName &&
+                                    d.date===nowYear[idx];
+                            }
+                        );
+                        
+                        bind4(newDataSet);
+                        render4(newDataSet);                        
+                        
+                        d3.select("#yearText").text(nowYear[idx]);
+                        
+                        idx++;
+                        if(idx>=nowYear.length){
+                            idx = 0;
+                        }
+                    },400);
+                    
+                })
+                
+                
+            }
+            
+            var initial = d3.select("#select4").property("value");
+            update(initial);
+            
+            d3.select("#select4").on("change", function(){
+                //找現在的value
+                var myCancer = d3.select("#select4").property("value");//注意寫法
+                update(myCancer);
+            })
+            
+            
+            
+            
+            
+            
+            
+        }//btnList
+    
+        
+        //原理：建立空陣列，然後比對（用indexOf）每一筆有沒有出現在array，沒有就加入
+        function unique(array){
+            var n=[];
+            array.forEach(function(d){
+                if(n.indexOf(d)===-1){
+                        n.push(d);
+                   }
+            });
+            return n;
+        }
+    
+    </script>
+
+<hr>
+
+
+</body>
+</html>
